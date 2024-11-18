@@ -1,18 +1,19 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import numpy as np
 import pickle
 from flask_cors import CORS
 
-# Enable CORS to allow cross-origin requests from your React frontend
+# Initialize the Flask app
 app = Flask(__name__)
 CORS(app)
 
-# Load your pre-trained model (make sure model.pkl exists and is the correct file path)
+# Load your pre-trained model
 model = pickle.load(open('model.pkl', 'rb'))
 
+# Serve the index.html from the same directory
 @app.route('/')
 def index():
-    return "Stock Prediction API"
+    return send_file('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -33,7 +34,7 @@ def predict():
 
         # Return the result as a JSON response
         return jsonify({'res-top': str(result)})
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

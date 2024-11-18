@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Price Prediction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      margin: 20px auto;
+      max-width: 400px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #007bff;
+    }
+    .error {
+      color: #ff0000;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stock Price Prediction</h1>
+  <form id="predictionForm">
+    <label for="high">High</label>
+    <input type="number" step="any" id="high" name="high" required>
+    <label for="low">Low</label>
+    <input type="number" step="any" id="low" name="low" required>
+    <label for="open">Open</label>
+    <input type="number" step="any" id="open" name="open" required>
+    <label for="volume">Volume</label>
+    <input type="number" step="any" id="volume" name="volume" required>
+    <button type="submit">Predict</button>
+  </form>
+  <div id="result" class="result"></div>
+  <div id="error" class="error"></div>
+
+  <script>
+    const form = document.getElementById('predictionForm');
+    const resultDiv = document.getElementById('result');
+    const errorDiv = document.getElementById('error');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      resultDiv.textContent = '';
+      errorDiv.textContent = '';
+
+      const high = document.getElementById('high').value;
+      const low = document.getElementById('low').value;
+      const open = document.getElementById('open').value;
+      const volume = document.getElementById('volume').value;
+
+      try {
+        const response = await fetch('http://127.0.0.1:5000/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ high, low, open, volume }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.textContent = `Predicted Stock Price: ${data['res-top']}`;
+        } else {
+          errorDiv.textContent = `Error: ${data.error}`;
+        }
+      } catch (error) {
+        errorDiv.textContent = `Error: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
